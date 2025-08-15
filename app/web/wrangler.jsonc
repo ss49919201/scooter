@@ -1,0 +1,12 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "scooter-web",
+	"main": "worker/index.ts",
+	"compatibility_date": "2025-08-13",
+	"assets": {
+		"not_found_handling": "single-page-application"
+	},
+	"observability": {
+		"enabled": true
+	}
+}
