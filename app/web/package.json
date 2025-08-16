@@ -10,7 +10,7 @@
     "deploy": "npm run build && wrangler deploy",
     "cf-typegen": "wrangler types",
     "drizzle:generate": "drizzle-kit generate --config=./worker/infra/d1/drizzle.config.ts",
-    "migrate:local": "wrangler d1 migrations apply D1",
-    "migrate": "wrangler d1 migrations apply D1 --remote"
+    "migrate:local": "wrangler d1 migrations apply D1_SCOOTER",
+    "migrate": "wrangler d1 migrations apply D1_SCOOTER --remote"
   }
 }

@@ -1,12 +1,10 @@
 import { Hono } from "hono";
-import { searchMontos } from "./query/monto";
+import { newDrizzle } from "./infra/d1/client";
+import { getSearchMontos } from "./infra/d1/query/monto";
 
-type Bindings = {
-  KV_SCOOTER: KVNamespace;
-};
-
-const monto = new Hono<{ Bindings: Bindings }>()
+const monto = new Hono<{ Bindings: Env }>()
   .get("/search", async (c) => {
+    const searchMontos = getSearchMontos(newDrizzle(c.env.D1_SCOOTER));
     const result = await searchMontos();
     return c.json(result);
   })
@@ -15,7 +13,7 @@ const monto = new Hono<{ Bindings: Bindings }>()
     return c.json("not implemented");
   });
 
-const app = new Hono<{ Bindings: Bindings }>().route("/montos", monto);
+const app = new Hono().route("/montos", monto);
 
 export type AppType = typeof app;
 
