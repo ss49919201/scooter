@@ -14,11 +14,30 @@ function App() {
       }[];
     }[]
   >();
+  const [filteredData, setFilteredData] = useState<
+    {
+      name: string;
+      addresses: {
+        url: string;
+      }[];
+    }[]
+  >();
+  const [nameInputValue, setNameInputValue] = useState("");
+
+  const filterByName = (name: string) => {
+    setFilteredData(data?.filter((datum) => datum.name.includes(name)));
+  };
+
+  const handleNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNameInputValue(e.target.value);
+    filterByName(e.target.value);
+  };
 
   useEffect(() => {
     client.montos.search.$get().then(async (res) => {
       const data = await res.json();
       setData(data);
+      setFilteredData(data);
     });
   }, []);
 
@@ -28,12 +47,20 @@ function App() {
     alert(`'${name}'`);
   };
 
-  if (!data) {
+  if (!data || !filteredData) {
     return <div>⏳loading...</div>;
   }
 
   return (
     <>
+      <div>
+        <h4>検索</h4>
+        <input
+          type="text"
+          value={nameInputValue}
+          onChange={handleNameInputChange}
+        />
+      </div>
       <form className="register-form" action={register}>
         <div>新規登録</div>
         <div>
@@ -52,7 +79,7 @@ function App() {
           <button type="submit">送信</button>
         </div>
       </form>
-      {data.map((datum) => (
+      {filteredData.map((datum) => (
         <div className="card">
           <div>名前: {datum.name}</div>
           {datum.addresses.map((address, i) => (
