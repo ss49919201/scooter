@@ -9,10 +9,12 @@
 	"observability": {
 		"enabled": true
 	},
-	"kv_namespaces": [
-		{
-			"binding": "KV_SCOOTER",
-			"id": "preview_id_placeholder"
-		}
-	],
+	"d1_databases": [
+	{
+		"binding": "D1",
+		"database_name" : "scooter",
+		"database_id" : "xxx",
+		"migrations_dir" : "./worker/infra/d1/migrations"
+	}
+	]
 }

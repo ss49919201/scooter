@@ -2,12 +2,15 @@
   "name": "scooter-web",
   "private": "true",
   "type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "tsc -b && vite build",
-		"lint": "eslint .",
-		"preview": "npm run build && vite preview",
-		"deploy": "npm run build && wrangler deploy",
-		"cf-typegen": "wrangler types"
-	}
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "npm run build && vite preview",
+    "deploy": "npm run build && wrangler deploy",
+    "cf-typegen": "wrangler types",
+    "drizzle:generate": "drizzle-kit generate --config=./worker/infra/d1/drizzle.config.ts",
+    "migrate:local": "wrangler d1 migrations apply D1",
+    "migrate": "wrangler d1 migrations apply D1 --remote"
+  }
 }
