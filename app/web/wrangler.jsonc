@@ -8,5 +8,11 @@
 	},
 	"observability": {
 		"enabled": true
-	}
+	},
+	"kv_namespaces": [
+		{
+			"binding": "KV_SCOOTER",
+			"id": "preview_id_placeholder"
+		}
+	],
 }

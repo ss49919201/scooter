@@ -1,58 +1,69 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import cloudflareLogo from './assets/Cloudflare_Logo.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
+import { hc } from "hono/client";
+import { type AppType } from "../worker/index";
+
+const client = hc<AppType>("/");
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [name, setName] = useState('unknown')
+  const [data, setData] = useState<
+    {
+      name: string;
+      addresses: {
+        url: string;
+      }[];
+    }[]
+  >();
+
+  useEffect(() => {
+    client.montos.search.$get().then(async (res) => {
+      const data = await res.json();
+      setData(data);
+    });
+  }, []);
+
+  const register = (formData: FormData) => {
+    // TODO: implement
+    const name = formData.get("name");
+    alert(`'${name}'`);
+  };
+
+  if (!data) {
+    return <div>⏳loading...</div>;
+  }
 
   return (
     <>
-      <div>
-        <a href='https://vite.dev' target='_blank'>
-          <img src={viteLogo} className='logo' alt='Vite logo' />
-        </a>
-        <a href='https://react.dev' target='_blank'>
-          <img src={reactLogo} className='logo react' alt='React logo' />
-        </a>
-        <a href='https://workers.cloudflare.com/' target='_blank'>
-          <img src={cloudflareLogo} className='logo cloudflare' alt='Cloudflare logo' />
-        </a>
-      </div>
-      <h1>Vite + React + Cloudflare</h1>
-      <div className='card'>
-        <button
-          onClick={() => setCount((count) => count + 1)}
-          aria-label='increment'
-        >
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <div className='card'>
-        <button
-          onClick={() => {
-            fetch('/api/')
-              .then((res) => res.json() as Promise<{ name: string }>)
-              .then((data) => setName(data.name))
-          }}
-          aria-label='get name'
-        >
-          Name from API is: {name}
-        </button>
-        <p>
-          Edit <code>worker/index.ts</code> to change the name
-        </p>
-      </div>
-      <p className='read-the-docs'>
-        Click on the Vite and React logos to learn more
-      </p>
+      <form className="register-form" action={register}>
+        <div>新規登録</div>
+        <div>
+          <label>名前：</label>
+          <input name="name" />
+        </div>
+        <div>
+          <label>住所URL1：</label>
+          <input name="address_url_1" />
+        </div>
+        <div>
+          <label>住所URL2：</label>
+          <input name="address_url_2" />
+        </div>
+        <div>
+          <button type="submit">送信</button>
+        </div>
+      </form>
+      {data.map((datum) => (
+        <div className="card">
+          <div>名前: {datum.name}</div>
+          {datum.addresses.map((address, i) => (
+            <div>
+              住所URL{i + 1}: <a href={address.url}>{address.url}</a>
+            </div>
+          ))}
+        </div>
+      ))}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
