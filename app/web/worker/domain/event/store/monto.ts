@@ -1,6 +1,6 @@
 import type { Effect } from "effect";
-import type { MontoEvent } from "../monto";
+import type { Monto, MontoEvent } from "../monto";
 
-export type StoreMontoEvent = (
-  event: MontoEvent
-) => Effect.Effect<never, Error>;
+export type StoreMonto = (event: MontoEvent) => Effect.Effect<void, Error>;
+
+export type LoadMonto = (id: string) => Effect.Effect<Monto, Error>;

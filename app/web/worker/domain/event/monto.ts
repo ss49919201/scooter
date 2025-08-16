@@ -64,6 +64,7 @@ export class Monto {
       Match.tag("MontoRemovedEvent", (event) => {
         this.#status = {
           ...this.#status,
+          version: this.#status.version + 1,
           removedReason: event.reason,
         };
       }),
@@ -79,6 +80,21 @@ export class Monto {
     for (const event of events) {
       monto.append(event);
     }
+    return Effect.succeed(monto);
+  }
+
+  public static register(
+    name: string,
+    address_urls: string[]
+  ): Effect.Effect<Monto, Error> {
+    // TODO: validate props
+
+    const monto = new Monto();
+    monto.append({
+      _tag: "MontoRegisteredEvent",
+      name,
+      address_urls,
+    });
     return Effect.succeed(monto);
   }
 }
