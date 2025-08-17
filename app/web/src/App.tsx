@@ -25,12 +25,25 @@ function App() {
   const [nameInputValue, setNameInputValue] = useState("");
 
   const filterByName = (name: string) => {
-    setFilteredData(data?.filter((datum) => datum.name.includes(name)));
+    if (!data) return;
+    
+    if (name === "") {
+      setFilteredData(data);
+    } else {
+      setFilteredData(data.filter((datum) => 
+        datum.name.toLowerCase().includes(name.toLowerCase())
+      ));
+    }
   };
 
   const handleNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNameInputValue(e.target.value);
     filterByName(e.target.value);
+  };
+
+  const clearSearch = () => {
+    setNameInputValue("");
+    filterByName("");
   };
 
   useEffect(() => {
@@ -52,44 +65,128 @@ function App() {
   }
 
   return (
-    <>
-      <div>
-        <h4>検索</h4>
-        <input
-          type="text"
-          value={nameInputValue}
-          onChange={handleNameInputChange}
-        />
-      </div>
-      <form className="register-form" action={register}>
-        <div>新規登録</div>
-        <div>
-          <label>名前：</label>
-          <input name="name" />
-        </div>
-        <div>
-          <label>住所URL1：</label>
-          <input name="address_url_1" />
-        </div>
-        <div>
-          <label>住所URL2：</label>
-          <input name="address_url_2" />
-        </div>
-        <div>
-          <button type="submit">送信</button>
-        </div>
-      </form>
-      {filteredData.map((datum) => (
-        <div className="card">
-          <div>名前: {datum.name}</div>
-          {datum.addresses.map((address, i) => (
-            <div>
-              住所URL{i + 1}: <a href={address.url}>{address.url}</a>
+    <div className="app-container">
+      <header className="app-header">
+        <h1>Monto管理システム</h1>
+      </header>
+      
+      <main className="app-main">
+        {/* 検索セクション */}
+        <section className="search-section">
+          <h2>検索</h2>
+          <div className="search-container">
+            <div className="search-input-wrapper">
+              <input
+                type="text"
+                placeholder="名前で検索（例: 田中）"
+                value={nameInputValue}
+                onChange={handleNameInputChange}
+                className="search-input"
+              />
+              {nameInputValue && (
+                <button type="button" onClick={clearSearch} className="search-clear">
+                  ✕
+                </button>
+              )}
             </div>
-          ))}
-        </div>
-      ))}
-    </>
+            
+            <div className="search-status">
+              {nameInputValue ? (
+                <span>「{nameInputValue}」の検索結果: {filteredData.length}件</span>
+              ) : (
+                <span>全{data?.length}件を表示中</span>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* 登録セクション */}
+        <section className="register-section">
+          <h2>新規登録</h2>
+          <form className="register-form" action={register}>
+            <div className="form-group">
+              <label htmlFor="name" className="form-label">
+                名前 <span className="required">*</span>
+              </label>
+              <input 
+                id="name"
+                name="name" 
+                className="form-input"
+                placeholder="例: 田中太郎"
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="address1" className="form-label">
+                住所URL1
+              </label>
+              <input 
+                id="address1"
+                name="address_url_1" 
+                className="form-input"
+                type="url"
+                placeholder="https://example.com"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="address2" className="form-label">
+                住所URL2
+              </label>
+              <input 
+                id="address2"
+                name="address_url_2" 
+                className="form-input"
+                type="url"
+                placeholder="https://example.com"
+              />
+            </div>
+            
+            <button type="submit" className="submit-button">
+              登録する
+            </button>
+          </form>
+        </section>
+
+        {/* 一覧セクション */}
+        <section className="list-section">
+          <h2>一覧</h2>
+          <div className="monto-list">
+            {filteredData.length === 0 && nameInputValue ? (
+              <div className="empty-state">
+                <p>「{nameInputValue}」に一致する結果が見つかりませんでした</p>
+              </div>
+            ) : (
+              filteredData.map((datum, index) => (
+                <div key={index} className="monto-card">
+                  <div className="monto-header">
+                    <h3 className="monto-name">{datum.name}</h3>
+                    <span className="monto-id">#{index + 1}</span>
+                  </div>
+                  
+                  <div className="monto-addresses">
+                    <h4>住所一覧</h4>
+                    {datum.addresses.length === 0 ? (
+                      <p className="no-addresses">住所が登録されていません</p>
+                    ) : (
+                      datum.addresses.map((address, i) => (
+                        <div key={i} className="address-item">
+                          <span className="address-label">URL{i + 1}:</span>
+                          <a href={address.url} className="address-link" target="_blank" rel="noopener noreferrer">
+                            {address.url}
+                          </a>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+      </main>
+    </div>
   );
 }
 
