@@ -1,2 +1,3 @@
 # scooter
-WIP...
+
+scooter is a monto management tool.
